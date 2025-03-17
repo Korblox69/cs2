@@ -1,32 +1,32 @@
-let scene, camera, renderer, controls;
-let player, weapons, bomb;
+function createMap(scene) {
+    let ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(50, 50),
+        new THREE.MeshStandardMaterial({ color: 0x555555 })
+    );
+    ground.rotation.x = -Math.PI / 2;
+    scene.add(ground);
 
-window.onload = function() {
-    init();
-    animate();
-};
+    let bombSite = new THREE.Mesh(
+        new THREE.CircleGeometry(2, 32),
+        new THREE.MeshBasicMaterial({ color: 0xff0000 })
+    );
+    bombSite.position.set(0, 0.1, 5);
+    bombSite.rotation.x = -Math.PI / 2;
+    scene.add(bombSite);
 
-function init() {
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("gameCanvas") });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    let walls = [
+        new THREE.Vector3(-5, 2.5, -5),
+        new THREE.Vector3(5, 2.5, -5),
+        new THREE.Vector3(-5, 2.5, 5),
+        new THREE.Vector3(5, 2.5, 5)
+    ];
     
-    document.body.appendChild(renderer.domElement);
-    
-    let light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(10, 10, 10);
-    scene.add(light);
-    
-    createMap(scene);
-    player = new Player(camera);
-    weapons = new Weapons(player);
-    bomb = new Bomb(scene, player);
-}
-
-function animate() {
-    requestAnimationFrame(animate);
-    player.update();
-    bomb.update();
-    renderer.render(scene, camera);
+    for (let pos of walls) {
+        let wall = new THREE.Mesh(
+            new THREE.BoxGeometry(10, 5, 1),
+            new THREE.MeshStandardMaterial({ color: 0x777777 })
+        );
+        wall.position.copy(pos);
+        scene.add(wall);
+    }
 }
